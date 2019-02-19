@@ -71,7 +71,7 @@
                             <td>{{$value->productName}}</td>
                             <td>{{$value->categoryName}}</td>
                             <td>{{$value->currentPrice}}</td>
-                            <td><input type="number" value="{{$value->quantity}}"  min="1" class="form-control quantity" style="width:70px"></td>
+                            <td class="map_td"> <input name="map_id" class="map_id" type="hidden" value="{{$value->id}}"><input type="hidden" value="{{$value->quantity}}"><input type="number" value="{{$value->quantity}}"  min="1" class="form-control quantity" style="width:70px"></td>
                             <td class="amount">{{$value->currentPrice}}</td>
                             <td class="delete_item"><i  class="fa fa-trash "></i>
                                 <input name="product_id" class="product_id" type="hidden" value="{{$value->id}}">
@@ -101,7 +101,7 @@
             <h3>Total Price</h3>
             <h3 id="amountTotal">₦{{$total}}</h3>
             </div>
-            <a href="{{url('checkout')}}"  id="checkout" class="primary-btn order-submit">Proceed to checkout</a>
+            <a href="#"  id="checkout" class="primary-btn order-submit">Proceed to checkout</a>
 
     </div>
 @endsection
@@ -110,17 +110,52 @@
     <script>
 
         $(function () {
+            $(".quantity").blur(function(){
+                var def_qty = $(this).prev().val();
+                var _this_qty = $(this).val();
+                var price =$(this).parent().prev().text();
+                var total = def_qty * price;
+                var totalAmount =0;
+                if (_this_qty==='' || _this_qty==0){
+                    $(this).val(def_qty);
+                    $(this).parent().next().text(total);
+                    $('.amount').each(function (index) {
+                        totalAmount+=parseInt($(this).text());
+                    });
+                    $('#amountTotal').text('₦'+ totalAmount);
+
+                }
+            }).mouseleave( function () {
+                var def_qty = $(this).prev().val();
+                var _this_qty = $(this).val();
+                var price =$(this).parent().prev().text();
+                var total = def_qty * price;
+                var totalAmount =0;
+                if (_this_qty==='' || _this_qty==0){
+                    $(this).val(def_qty);
+                    $(this).parent().next().text(total);
+                    $('.amount').each(function (index) {
+                        totalAmount+=parseInt($(this).text());
+                    });
+                    $('#amountTotal').text('₦'+ totalAmount);
+
+                }
+            });
+
 
             $('.quantity').change(function () {
                 var totalAmount =0;
                 var qty = $(this).val();
                 var price =$(this).parent().prev().text();
                 var total = qty * price;
-                $(this).parent().next().text(total);
-                $('.amount').each(function (index) {
-                    totalAmount+=parseInt($(this).text());
-                });
-                $('#amountTotal').text('₦'+ totalAmount);
+                if (qty !=='' &&  qty>0){
+                    $(this).parent().next().text(total);
+                    $('.amount').each(function (index) {
+                        totalAmount+=parseInt($(this).text());
+                    });
+                    $('#amountTotal').text('₦'+ totalAmount);
+                }
+
 
             });
 
@@ -129,11 +164,14 @@
                 var qty = $(this).val();
                 var price =$(this).parent().prev().text();
                 var total = qty * price;
-                $(this).parent().next().text(total);
-                $('.amount').each(function (index) {
-                    totalAmount+=parseInt($(this).text());
-                });
-                $('#amountTotal').text('₦'+ totalAmount);
+                if (qty !=='' && qty>0){
+                    $(this).parent().next().text(total);
+                    $('.amount').each(function (index) {
+                        totalAmount+=parseInt($(this).text());
+                    });
+                    $('#amountTotal').text('₦'+ totalAmount);
+                }
+
 
             });
 
@@ -172,16 +210,15 @@
          });
 
          $('#checkout').click(function () {
-            var ids = [];
-            var qty = [];
-             $('.product_id').each(function (index, value) {
-                 ids.push($(this).attr('value'));
-            });
+            var mapItems = new Map();
              $('.quantity').each(function (index, value) {
-                 qty.push($(this).attr('value'));
-             });
-             console.log(ids);
-             console.log(qty);
+                // var product_id = value.attr('class','map_id').val();
+                // var qty =value.attr('class','quantity').val();
+                // console.log(product_id +"" + qty)
+                 console.log(value)
+
+            });
+
          });
 
         });
